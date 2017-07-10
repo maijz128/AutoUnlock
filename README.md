@@ -22,5 +22,7 @@
 
 > 链接: https://pan.baidu.com/s/1miHVd8k 密码: hg9j
 
+>  DL：https://mega.nz/#F!U3YHETJb
+>  Key: !ssb0H0GIi4Qk-JGCox5W0Q
 
 ![image](https://github.com/maijz128/AutoUnlock/raw/master/2017-07-10_10-19-12.gif)
