@@ -21,3 +21,6 @@
 实例：选中以下文本打开
 
 > 链接: https://pan.baidu.com/s/1miHVd8k 密码: hg9j
+
+
+![image](https://github.com/maijz128/AutoUnlock/raw/master/2017-07-10_10-19-12.gif)
