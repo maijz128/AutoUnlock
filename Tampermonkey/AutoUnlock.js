@@ -1,9 +1,10 @@
 // ==UserScript==
 // @name         AutoUnlock
-// @namespace    https://github.com/maijz128/AutoUnlock
+// @namespace    https://greasyfork.org/scripts/31324-autounlock
 // @version      0.1
 // @description  自动跳转并解锁百度网盘分享
 // @author       MaiJZ
+// @homepageURL  https://github.com/maijz128/AutoUnlock
 // @supportURL   https://github.com/maijz128/AutoUnlock
 // @match        http://maijz128.github.io/AutoUnlock/AutoUnlock/?open=*
 // @match        https://maijz128.github.io/AutoUnlock/AutoUnlock/?open=*
