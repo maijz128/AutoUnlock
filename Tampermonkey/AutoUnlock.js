@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         AutoUnlock
 // @namespace    https://greasyfork.org/scripts/31324-autounlock
-// @version      0.1
-// @description  自动跳转并解锁百度网盘分享
+// @version      0.2
+// @description  自动跳转并解锁百度网盘、Mega分享
 // @author       MaiJZ
 // @homepageURL  https://github.com/maijz128/AutoUnlock
 // @supportURL   https://github.com/maijz128/AutoUnlock
@@ -10,6 +10,7 @@
 // @match        https://maijz128.github.io/AutoUnlock/AutoUnlock/?open=*
 // @match        http://pan.baidu.com/share/init?shareid=*
 // @match        https://pan.baidu.com/share/init?shareid=*
+// @match        http://localhost:8094/AutoUnlock/?open=*
 // @grant        GM_setValue
 // @grant        GM_getValue
 // @grant        GM_getTab
@@ -41,26 +42,41 @@ function run() {
 
 function updateData() {
     if (AutoUnlock) {
+        var targetURL = null;
 
-        var autoUnlock = {
-            updateTime: Date.now(),
-            url: AutoUnlock.url,
-            password: AutoUnlock.password
-        };
-        console.info(autoUnlock);
+        const isMega = AutoUnlock.url.indexOf("mega.nz") > -1;
+        const isBaiduPan = AutoUnlock.url.indexOf("pan.baidu.com") > -1;
+
+        if (isMega) {
+            targetURL = AutoUnlock.url + AutoUnlock.password;
+        }
+
+        if (isBaiduPan) {
+            var autoUnlock = {
+                updateTime: Date.now(),
+                url: AutoUnlock.url,
+                password: AutoUnlock.password
+            };
+            console.info(autoUnlock);
 
 
-        // init tab
-        GM_getTab(function (o) {
-            var this_tab_data = o;
-            this_tab_data[TAB_ID] = true;
-            this_tab_data.AutoUnlock = autoUnlock;
-            GM_saveTab(this_tab_data);
-        });
+            // init tab
+            GM_getTab(function (o) {
+                var this_tab_data = o;
+                this_tab_data[TAB_ID] = true;
+                this_tab_data.AutoUnlock = autoUnlock;
+                GM_saveTab(this_tab_data);
+            });
+
+            targetURL = AutoUnlock.url;
+        }
+
 
         // 更新数据后跳转到网盘
         setTimeout(function () {
-            location.href = "http://" + AutoUnlock.url;
+            if (targetURL) {
+                location.href = "http://" + targetURL;
+            }
         }, 500);
     }
 
@@ -68,21 +84,6 @@ function updateData() {
 
 function unlock() {
     var autoUnlock = null;
-    //
-    // GM_getTabs(function (db) {
-    //     var all_tabs = db;
-    //     var tab = null;
-    //     // for (var i in all_tabs) {
-    //     //     tab = all_tabs[i];
-    //     //
-    //     //     if (tab[TAB_ID]) {
-    //     //         autoUnlock = tab.AutoUnlock;
-    //     //         console.info(autoUnlock);
-    //     //         console.info(tab);
-    //     //         break;
-    //     //     }
-    //     // }
-    // });
 
     GM_getTab(function (o) {
         tab = o;
@@ -135,6 +136,22 @@ const PAN_BAIDU_COM = {
     InputID: "accessCode"
 };
 
+
+//
+// GM_getTabs(function (db) {
+//     var all_tabs = db;
+//     var tab = null;
+//     // for (var i in all_tabs) {
+//     //     tab = all_tabs[i];
+//     //
+//     //     if (tab[TAB_ID]) {
+//     //         autoUnlock = tab.AutoUnlock;
+//     //         console.info(autoUnlock);
+//     //         console.info(tab);
+//     //         break;
+//     //     }
+//     // }
+// });
 
 function setPref(name, value) { //  cross-browser GM_setValue
     var a = '', b = '';
