@@ -5,8 +5,8 @@
 // @description  自动跳转并解锁百度网盘分享
 // @author       MaiJZ
 // @supportURL   https://github.com/maijz128/AutoUnlock
-// @match        http://*/AutoUnlock/?open=*
-// @match        https://*/AutoUnlock/?open=*
+// @match        http://maijz128.github.io/AutoUnlock/AutoUnlock/?open=*
+// @match        https://maijz128.github.io/AutoUnlock/AutoUnlock/?open=*
 // @match        http://pan.baidu.com/share/init?shareid=*
 // @match        https://pan.baidu.com/share/init?shareid=*
 // @grant        GM_setValue
