@@ -12,3 +12,12 @@
 
 > AutoUnlock    
 > https://maijz128.github.io/AutoUnlock/AutoUnlock/?open=%s
+
+
+### 第三步，选中文本然后右键菜单打开
+
+选中链接和密码并通过右键菜单（右键搜）AutoUnlock打开
+
+实例：选中以下文本打开
+
+> 链接: https://pan.baidu.com/s/1miHVd8k 密码: hg9j
