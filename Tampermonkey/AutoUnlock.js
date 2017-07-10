@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AutoUnlock
 // @namespace    https://greasyfork.org/scripts/31324-autounlock
-// @version      0.2
+// @version      0.2.1
 // @description  自动跳转并解锁百度网盘、Mega分享
 // @author       MaiJZ
 // @homepageURL  https://github.com/maijz128/AutoUnlock
@@ -19,12 +19,12 @@
 // @grant        unsafeWindow
 // ==/UserScript==
 
+const SITE_WAIT_TIME = 500;
+const DATA_OVER_TIME = 10 * 1000;
+
 (function () {
     'use strict';
-
-    setTimeout(function () {
-        run();
-    }, 500);
+    run();
 })();
 
 function run() {
@@ -32,99 +32,117 @@ function run() {
     var isBaiduShareInitSite = location.href.indexOf("pan.baidu.com/share/init") > -1;
 
     if (isAutoUnlockSite) {
-        updateData();
-    }
-
-    if (isBaiduShareInitSite) {
-        unlock();
-    }
-}
-
-function updateData() {
-    if (AutoUnlock) {
-        var targetURL = null;
-
-        const isMega = AutoUnlock.url.indexOf("mega.nz") > -1;
-        const isBaiduPan = AutoUnlock.url.indexOf("pan.baidu.com") > -1;
-
-        if (isMega) {
-            targetURL = AutoUnlock.url + AutoUnlock.password;
-        }
-
-        if (isBaiduPan) {
-            var autoUnlock = {
-                updateTime: Date.now(),
-                url: AutoUnlock.url,
-                password: AutoUnlock.password
-            };
-            console.info(autoUnlock);
-
-
-            // init tab
-            GM_getTab(function (o) {
-                var this_tab_data = o;
-                this_tab_data[TAB_ID] = true;
-                this_tab_data.AutoUnlock = autoUnlock;
-                GM_saveTab(this_tab_data);
-            });
-
-            targetURL = AutoUnlock.url;
-        }
-
-
-        // 更新数据后跳转到网盘
-        setTimeout(function () {
-            if (targetURL) {
-                location.href = "http://" + targetURL;
+        var inter = setInterval(function () {
+            if (AutoUnlock) {
+                clearInterval(inter);
+                handle(AutoUnlock);
             }
-        }, 500);
+        }, 50);
+    } else if (isBaiduShareInitSite) {
+        unlock_baidu();
     }
+}
+
+function handle(autoUnlock) {
+    const isMega = autoUnlock.url.indexOf("mega.nz") > -1;
+    const isBaiduPan = autoUnlock.url.indexOf("pan.baidu.com") > -1;
+
+    const url = AutoUnlock.url;
+    const password = AutoUnlock.password;
+
+    if (isBaiduPan) {
+        handleBaidu(url, password);
+    } else if (isMega) {
+        handleMega(url, password);
+    }
+}
+
+function handleBaidu(url, password) {
+    var autoUnlock = {
+        updateTime: Date.now(),
+        url: url,
+        password: password
+    };
+    console.group("AutoUnlockSite >> pan.baiu.com:");
+    console.info(autoUnlock);
+    console.groupEnd();
+
+    // init tab
+    GM_getTab(function (o) {
+        var this_tab_data = o;
+        this_tab_data[TAB_ID] = true;
+        this_tab_data.AutoUnlock = autoUnlock;
+        GM_saveTab(this_tab_data);
+
+        jumpSite(url);
+    });
 
 }
 
-function unlock() {
+function handleMega(url, password) {
+    var targetURL = url + password;
+    jumpSite(targetURL);
+}
+
+// 更新数据后跳转到网盘
+function jumpSite(url) {
+    var targetURL = url;
+    if (targetURL.indexOf("http") !== 0) {
+        targetURL = "http://" + targetURL;
+    }
+    setTimeout(function () {
+        if (targetURL) {
+            location.href = targetURL;
+        }
+    }, SITE_WAIT_TIME);
+}
+
+function unlock_baidu() {
     var autoUnlock = null;
 
     GM_getTab(function (o) {
-        tab = o;
+        var tab = o;
         if (tab[TAB_ID]) {
             autoUnlock = tab.AutoUnlock;
+            console.group("AutoUnlock:");
             console.info(autoUnlock);
+            console.groupEnd();
         }
 
         if (autoUnlock) {
             const nowTime = Date.now();
             const updateTime = parseInt(autoUnlock.updateTime) || 0;
-            const notOvertime = (nowTime - updateTime) < 30 * 1000;
+            const notOvertime = (nowTime - updateTime) < DATA_OVER_TIME;
 
             if (notOvertime) {
-                _unlock(autoUnlock.password);
-
-                // 使用之后设置为超时，令其不再可用
-                // setPref(KEY_UpdateTime, 0);
-                autoUnlock.updateTime = 0;
-                tab.AutoUnlock = null;
-                GM_saveTab(tab);
+                _unlock_baidu(autoUnlock.password);
+            } else {
+                console.error("数据已超时！");
             }
         }
-
     });
 
 }
 
-function _unlock(passowrd) {
-    if (passowrd) {
+function _unlock_baidu(password, count) {
+    const MAX_TIME = 10 * 1000;
+    const INTERVAL = 50;
+    const MAX_COUNT = MAX_TIME / INTERVAL;
+    count = count || 1;
+
+    console.log("password: " + password + " count: " + count);
+    if (count < MAX_COUNT && password) {
+
         var input = document.getElementById(PAN_BAIDU_COM.InputID);
         var submitBtn = document.getElementById(PAN_BAIDU_COM.SubmitBtnID);
-
         if (input && submitBtn) {
-            input.value = passowrd;
+            input.value = password;
             submitBtn.click();
-        } else {
-            setTimeout(function () {
-                _unlock(passowrd);
-            }, 100);
         }
+
+        setTimeout(function () {
+            _unlock_baidu(password, count + 1);
+        }, INTERVAL);
     }
 }
 
