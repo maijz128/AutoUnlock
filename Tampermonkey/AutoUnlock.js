@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AutoUnlock
 // @namespace    https://greasyfork.org/scripts/31324-autounlock
-// @version      0.2.1
+// @version      0.2.2
 // @description  自动跳转并解锁百度网盘、Mega分享
 // @author       MaiJZ
 // @homepageURL  https://github.com/maijz128/AutoUnlock
@@ -33,7 +33,7 @@ function run() {
 
     if (isAutoUnlockSite) {
         var inter = setInterval(function () {
-            if (AutoUnlock) {
+            if (AutoUnlock.done) {
                 clearInterval(inter);
                 handle(AutoUnlock);
             }
@@ -44,11 +44,11 @@ function run() {
 }
 
 function handle(autoUnlock) {
-    const isMega = autoUnlock.url.indexOf("mega.nz") > -1;
-    const isBaiduPan = autoUnlock.url.indexOf("pan.baidu.com") > -1;
+    const url = autoUnlock.url;
+    const password = autoUnlock.password;
+    const isMega = url.indexOf("mega.nz") > -1;
+    const isBaiduPan = url.indexOf("pan.baidu.com") > -1;
 
-    const url = AutoUnlock.url;
-    const password = AutoUnlock.password;
 
     if (isBaiduPan) {
         handleBaidu(url, password);
