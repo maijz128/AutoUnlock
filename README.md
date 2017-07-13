@@ -1,4 +1,4 @@
-# AutoUnlock
+# [AutoUnlock](https://github.com/maijz128/AutoUnlock)
 
 ## 使用(Chrome)
 
@@ -20,7 +20,7 @@ Chrome添加扩展[右键搜](https://chrome.google.com/webstore/detail/context-
 
 选中链接和密码并通过右键菜单（右键搜）AutoUnlock打开
 
-实例：选中以下文本打开
+实例：选中以下文本并右键打开
 
 > 链接: https://pan.baidu.com/s/1miHVd8k 密码: hg9j
 
