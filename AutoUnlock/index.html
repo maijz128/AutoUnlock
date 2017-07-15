@@ -6,7 +6,7 @@
 
     <script>
         var _hmt = _hmt || [];
-        (function() {
+        (function () {
             var hm = document.createElement("script");
             hm.src = "https://hm.baidu.com/hm.js?2fbb9d0dd10b95bb89a8aebd12da6afa";
             var s = document.getElementsByTagName("script")[0];
@@ -17,11 +17,32 @@
 
     <script src="index.js"></script>
 
+    <style>
+        a {  color: #0366d6;  text-decoration: none;  }
 
+        a:hover {  text-decoration: underline;  }
+
+        blockquote {
+            margin: 0;  padding: 0 1em;
+            color: #6a737d;  border-left: 0.25em solid #dfe2e5;
+        }
+    </style>
 </head>
 <body>
+<div id="header">
+    <h2>
+        反馈
+        << <a href="https://greasyfork.org/scripts/31324-autounlock">Tampermonkey(油猴)</a>
+        << <a href="https://github.com/maijz128/AutoUnlock">GitHub</a>
+        ;
+    </h2>
+</div>
 <div id="console">
-
+    <blockquote>
+        <div id="openContent"></div>
+        <div id="url"></div>
+        <div id="password"></div>
+    </blockquote>
 </div>
 </body>
 </html>

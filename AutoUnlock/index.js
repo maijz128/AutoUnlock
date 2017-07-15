@@ -36,14 +36,34 @@ function main() {
 
     AutoUnlock.done = true;
 
-
-    const elConsole = document.getElementById("console");
-    var hint = "content: " + AutoUnlock.openContent + "\n";
-    hint += "url: " + AutoUnlock.url + "\n";
-    hint += "password: " + AutoUnlock.password + "\n";
-    elConsole.innerText = hint;
+    refreshUI();
 }
 
+function refreshUI() {
+    // const elConsole = document.getElementById("console");
+    const elOpenContent = document.querySelector("#console #openContent");
+    const elURL = document.querySelector("#console #url");
+    const elPassword = document.querySelector("#console #password");
+
+    elOpenContent.innerText = "OpenContent: " + AutoUnlock.openContent;
+    elPassword.innerText = "Password: " + AutoUnlock.password;
+
+    {
+        var url = AutoUnlock.url;
+        if (url === null) {
+            url = "javascript:void(0);";
+        } else if (url.indexOf("http") !== 0) {
+            url = "http://" + url;
+        }
+
+        var elA = document.createElement("a");
+        elA.setAttribute("href", url);
+        elA.innerText = url;
+
+        elURL.innerText = "URL: ";
+        elURL.appendChild(elA);
+    }
+}
 
 function Interpreter(openContent) {
     const self = this;
