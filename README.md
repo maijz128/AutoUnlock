@@ -27,4 +27,6 @@ Chrome添加扩展[右键搜](https://chrome.google.com/webstore/detail/context-
 >  DL：https://mega.nz/#F!U3YHETJb
 >  Key: !ssb0H0GIi4Qk-JGCox5W0Q
 
+[预览](http://wx3.sinaimg.cn/large/9ded8f97gy1fhkduvua59g21100soqgh.gif)
+
 ![image](https://github.com/maijz128/AutoUnlock/raw/master/2017-07-10_10-19-12.gif)
