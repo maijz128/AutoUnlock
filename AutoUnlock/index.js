@@ -72,15 +72,16 @@ function Interpreter(openContent) {
     self._password = null;
 
     var baidu = new PanBaiduCom();
+    var mega = new MegaNZ();
     if (baidu.matching(openContent)) {
         self._url = baidu.url;
         self._password = baidu.password;
-    }
-
-    var mega = new MegaNZ();
-    if (mega.matching(openContent)) {
+    } else if (mega.matching(openContent)) {
         self._url = mega.url;
         self._password = mega.password;
+    } else if (baidu.matching_SimpleURL(openContent)) {
+        self._url = baidu.url;
+        self._password = baidu.password;
     }
 }
 Interpreter.prototype.getURL = function () {
@@ -116,6 +117,36 @@ PanBaiduCom.prototype.matching = function (openContent) {
             this.password = rPassword[0];
         }
 
+    }
+    return this.url;
+};
+PanBaiduCom.prototype.matching_SimpleURL = function (openContent) {
+    const URL_HEADER = "pan.baidu.com/s/";
+    const pUrl = new RegExp("[a-z0-9A-Z]{5,10}");
+    const pPassword = new RegExp("[a-z0-9A-Z]{4}");
+
+    const content = removeHttpAndHttps(openContent);
+    var wordList = content.split(/\s/g);
+
+    for (var key in wordList) {
+        var word = wordList[key];
+
+        if (this.url === null) {
+            var rURl = pUrl.exec(word);
+            if (rURl) {
+                const url = rURl[0];
+                word = word.replace(url, "");
+                this.url = URL_HEADER + url;
+            }
+        }
+
+        if (this.password === null) {
+            var rPassword = pPassword.exec(word);
+            if (rPassword) {
+                this.password = rPassword[0];
+                word = word.replace(this.password, "");
+            }
+        }
     }
     return this.url;
 };

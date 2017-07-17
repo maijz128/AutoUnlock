@@ -22,10 +22,10 @@ Chrome添加扩展[右键搜](https://chrome.google.com/webstore/detail/context-
 
 实例：选中以下文本并右键打开
 
-> 链接: https://pan.baidu.com/s/1miHVd8k 密码: hg9j
+> 百度分享1 >> 链接: https://pan.baidu.com/s/1miHVd8k 密码: hg9j
+> 百度分享2 >> 1miHVd8k 密码: hg9j
 
->  DL：https://mega.nz/#F!U3YHETJb
->  Key: !ssb0H0GIi4Qk-JGCox5W0Q
+> Mega >> DL：https://mega.nz/#F!U3YHETJb Key: !ssb0H0GIi4Qk-JGCox5W0Q
 
 [预览](http://wx3.sinaimg.cn/large/9ded8f97gy1fhkduvua59g21100soqgh.gif)
 
