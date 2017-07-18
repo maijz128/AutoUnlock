@@ -26,6 +26,8 @@
             margin: 0;  padding: 0 1em;
             color: #6a737d;  border-left: 0.25em solid #dfe2e5;
         }
+
+        #hint { color: red; display: none;}
     </style>
 </head>
 <body>
@@ -44,5 +46,15 @@
         <div id="password"></div>
     </blockquote>
 </div>
+<div id="hint">
+<h3>如果没能转到分享页面，请反馈至作者！谢谢。</h3>
+</div>
+
+<script>
+    setTimeout(function () {
+        var elHint = document.getElementById("hint");
+        elHint.style.display = "block";
+    }, 10 * 1000);
+</script>
 </body>
 </html>
