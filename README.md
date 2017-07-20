@@ -6,7 +6,9 @@
 
 Chrome添加扩展[Tampermonkey(油猴)](https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo)并添加使用此脚本[31324-autounlock](https://greasyfork.org/scripts/31324-autounlock) 。
 
+打开以下链接测试脚本：
 
+> [https://maijz128.github.io/AutoUnlock/AutoUnlock/?open=链接: https://pan.baidu.com/s/1miHVd8k 密码: hg9j](https://maijz128.github.io/AutoUnlock/AutoUnlock/?open=%E9%93%BE%E6%8E%A5%3A%20https%3A%2F%2Fpan.baidu.com%2Fs%2F1miHVd8k%20%E5%AF%86%E7%A0%81%3A%20hg9j)
 
 ### 第二步，[右键搜](https://chrome.google.com/webstore/detail/context-menus/phlfmkfpmphogkomddckmggcfpmfchpn)
 
