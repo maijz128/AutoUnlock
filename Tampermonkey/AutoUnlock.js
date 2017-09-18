@@ -1,15 +1,15 @@
 // ==UserScript==
 // @name         AutoUnlock
 // @namespace    https://greasyfork.org/scripts/31324-autounlock
-// @version      0.2.2
+// @version      0.2.3          
 // @description  自动跳转并解锁百度网盘、Mega分享
 // @author       MaiJZ
 // @homepageURL  https://github.com/maijz128/AutoUnlock
 // @supportURL   https://github.com/maijz128/AutoUnlock
 // @match        http://maijz128.github.io/AutoUnlock/AutoUnlock/?open=*
 // @match        https://maijz128.github.io/AutoUnlock/AutoUnlock/?open=*
-// @match        http://pan.baidu.com/share/init?shareid=*
-// @match        https://pan.baidu.com/share/init?shareid=*
+// @match        http://pan.baidu.com/share/init?*
+// @match        https://pan.baidu.com/share/init?*
 // @match        http://localhost:8094/AutoUnlock/?open=*
 // @grant        GM_setValue
 // @grant        GM_getValue
