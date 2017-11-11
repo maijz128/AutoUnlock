@@ -1,4 +1,4 @@
-# [AutoUnlock](https://github.com/maijz128/AutoUnlock)
+# [AutoUnlock](https://github.com/maijz128/AutoUnlock)[已废弃]
 
 ## 使用(Chrome)
 
