@@ -1,4 +1,4 @@
-# [AutoUnlock](https://github.com/maijz128/AutoUnlock)[已废弃]
+# [AutoUnlock](https://github.com/maijz128/AutoUnlock)
 
 ## 使用(Chrome)
 
@@ -24,8 +24,9 @@ Chrome添加扩展[右键搜](https://chrome.google.com/webstore/detail/context-
 
 实例：选中以下文本并右键打开
 
-> 百度分享1 >> 链接: https://pan.baidu.com/s/1miHVd8k 密码: hg9j  
-> 百度分享2 >> 1miHVd8k 密码: hg9j  
+> 百度分享1 >> 链接: https://pan.baidu.com/s/1dy5Him 密码: atq8 
+>
+> 百度分享2 >> 1sm6OBiH 密码: ssz5
 
 > Mega分享 >> DL：https://mega.nz/#F!U3YHETJb Key: !ssb0H0GIi4Qk-JGCox5W0Q
 

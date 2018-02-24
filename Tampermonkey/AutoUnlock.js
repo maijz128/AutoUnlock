@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AutoUnlock
 // @namespace    https://greasyfork.org/scripts/31324-autounlock
-// @version      0.3.0
+// @version      0.4.0
 // @description  自动跳转并解锁百度网盘、Mega分享
 // @author       MaiJZ
 // @homepageURL  https://github.com/maijz128/AutoUnlock
@@ -11,12 +11,7 @@
 // @match        http://pan.baidu.com/share/init?*
 // @match        https://pan.baidu.com/share/init?*
 // @match        http://localhost:8094/AutoUnlock/?open=*
-// @grant        GM_setValue
-// @grant        GM_getValue
-// @grant        GM_getTab
-// @grant        GM_saveTab
-// @grant        GM_getTabs
-// @grant        unsafeWindow
+// @grant        none
 // ==/UserScript==
 
 const SITE_WAIT_TIME = 500;
@@ -35,13 +30,6 @@ const Util = {
         else
             return null;
     }
-};
-
-const TAB_ID = "Tab_AutoUnlock";
-
-const PAN_BAIDU_COM = {
-    SubmitBtnID: "submitBtn",
-    InputID: "accessCode"
 };
 
 
@@ -64,8 +52,6 @@ function run() {
     } else if (isBaiduShareInitSite) {
         if (Util.hrefContains("password=")) {
             unlock_baidu2();
-        } else {
-            unlock_baidu();
         }
     }
 }
@@ -94,16 +80,21 @@ function handleBaidu(url, password) {
     console.info(autoUnlock);
     console.groupEnd();
 
-    // init tab
-    GM_getTab(function (o) {
-        var this_tab_data = o;
-        this_tab_data[TAB_ID] = true;
-        this_tab_data.AutoUnlock = autoUnlock;
-        GM_saveTab(this_tab_data);
+    const baiduLink_format = formatBaiduLink(url);
+    const targetURL = baiduLink_format + "&password=" + password;
+    console.log(targetURL);
+    window.location.href = targetURL;
 
-        jumpSite(url);
-    });
+}
 
+function formatBaiduLink(link) {
+    // link : https://pan.baidu.com/s/1kUM8Lt9
+    // return : https://pan.baidu.com/share/init?surl=kUM8Lt9
+    const tokenList = link.split("/");
+    var key = tokenList[tokenList.length - 1];
+    // 去掉前面一位字符
+    key = key.substring(1);
+    return "https://pan.baidu.com/share/init?surl=" + key;
 }
 
 function handleMega(url, password) {
@@ -123,34 +114,6 @@ function jumpSite(url) {
         }
     }, SITE_WAIT_TIME);
 }
-
-function unlock_baidu() {
-    var autoUnlock = null;
-
-    GM_getTab(function (o) {
-        var tab = o;
-        if (tab[TAB_ID]) {
-            autoUnlock = tab.AutoUnlock;
-            console.group("AutoUnlock:");
-            console.info(autoUnlock);
-            console.groupEnd();
-        }
-
-        if (autoUnlock) {
-            const nowTime = Date.now();
-            const updateTime = parseInt(autoUnlock.updateTime) || 0;
-            const notOvertime = (nowTime - updateTime) < DATA_OVER_TIME;
-
-            if (notOvertime) {
-                _unlock_baidu(autoUnlock.password);
-            } else {
-                console.error("数据已超时！");
-            }
-        }
-    });
-
-}
-
 
 function unlock_baidu2() {
     const value = Util.GetQueryString("password");
@@ -182,51 +145,5 @@ function _unlock_baidu(password, count) {
         setTimeout(function () {
             _unlock_baidu(password, count + 1);
         }, INTERVAL);
-    }
-}
-
-
-
-function setPref(name, value) { //  cross-browser GM_setValue
-    var a = '', b = '';
-    try {
-        a = typeof GM_setValue.toString;
-        b = GM_setValue.toString()
-    } catch (e) {
-    }
-    if (typeof GM_setValue === 'function' &&
-        (a === 'undefined' || b.indexOf('not supported') === -1)) {
-        GM_setValue(name, value); // Greasemonkey, Tampermonkey, Firefox extension
-    } else {
-        var ls = null;
-        try {
-            ls = window.localStorage || null
-        } catch (e) {
-        }
-        if (ls) {
-            return ls.setItem(name, value); // Chrome script, Opera extensions
-        }
-    }
-}
-
-function getPref(name) { // cross-browser GM_getValue
-    var a = '', b = '';
-    try {
-        a = typeof GM_getValue.toString;
-        b = GM_getValue.toString()
-    } catch (e) {
-    }
-    if (typeof GM_getValue === 'function' &&
-        (a === 'undefined' || b.indexOf('not supported') === -1)) {
-        return GM_getValue(name, null); // Greasemonkey, Tampermonkey, Firefox extension
-    } else {
-        var ls = null;
-        try {
-            ls = window.localStorage || null
-        } catch (e) {
-        }
-        if (ls) {
-            return ls.getItem(name); // Chrome script, Opera extensions
-        }
     }
 }
