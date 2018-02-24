@@ -12,12 +12,15 @@
  //  %E9%93%BE%E6%8E%A5%3A%20https%3A%2F%2Fpan.baidu.com%2Fs%2F1jI7PL7g%20%E5%AF%86%E7%A0%81%3A%20p7w2
  // 填写密码URL：https://pan.baidu.com/share/init?shareid=766152910&uk=2601301299
 
+ // URL:https://pan.baidu.com/share/init?surl=1miHVd8k&password=hg9j
  */
 /*  mega.nz
 
  链接和密匙：https://mega.nz/#F!U3YHETJb!ssb0H0GIi4Qk-JGCox5W0Q
 
  */
+
+const SITE_WAIT_TIME = 500;
 
 const AutoUnlock = {
     url: null,

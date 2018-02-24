@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AutoUnlock
 // @namespace    https://greasyfork.org/scripts/31324-autounlock
-// @version      0.2.3          
+// @version      0.3.0
 // @description  自动跳转并解锁百度网盘、Mega分享
 // @author       MaiJZ
 // @homepageURL  https://github.com/maijz128/AutoUnlock
@@ -22,14 +22,37 @@
 const SITE_WAIT_TIME = 500;
 const DATA_OVER_TIME = 10 * 1000;
 
+
+const Util = {
+    hrefContains: function (str) {
+        return location.href.indexOf(str) > 1;
+    },
+    GetQueryString: function (name) {
+        var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+        var r = window.location.search.substr(1).match(reg);
+        if (r !== null)
+            return (r[2]);
+        else
+            return null;
+    }
+};
+
+const TAB_ID = "Tab_AutoUnlock";
+
+const PAN_BAIDU_COM = {
+    SubmitBtnID: "submitBtn",
+    InputID: "accessCode"
+};
+
+
 (function () {
     'use strict';
     run();
 })();
 
 function run() {
-    var isAutoUnlockSite = location.href.indexOf("AutoUnlock") > -1;
-    var isBaiduShareInitSite = location.href.indexOf("pan.baidu.com/share/init") > -1;
+    var isAutoUnlockSite = Util.hrefContains("AutoUnlock");
+    var isBaiduShareInitSite = Util.hrefContains("pan.baidu.com/share/init");
 
     if (isAutoUnlockSite) {
         var inter = setInterval(function () {
@@ -39,7 +62,11 @@ function run() {
             }
         }, 50);
     } else if (isBaiduShareInitSite) {
-        unlock_baidu();
+        if (Util.hrefContains("password=")) {
+            unlock_baidu2();
+        } else {
+            unlock_baidu();
+        }
     }
 }
 
@@ -124,6 +151,17 @@ function unlock_baidu() {
 
 }
 
+
+function unlock_baidu2() {
+    const value = Util.GetQueryString("password");
+    if (value !== null) {
+        var password = decodeURIComponent(value);
+        console.log("password=" + password);
+        _unlock_baidu(password);
+    }
+}
+
+
 function _unlock_baidu(password, count) {
     const MAX_TIME = 10 * 1000;
     const INTERVAL = 50;
@@ -133,8 +171,9 @@ function _unlock_baidu(password, count) {
     console.log("password: " + password + " count: " + count);
     if (count < MAX_COUNT && password) {
 
-        var input = document.getElementById(PAN_BAIDU_COM.InputID);
-        var submitBtn = document.getElementById(PAN_BAIDU_COM.SubmitBtnID);
+        var inputs = document.querySelectorAll("input");
+        var input = inputs[0];
+        var submitBtn = document.querySelector("a[title='提取文件']");
         if (input && submitBtn) {
             input.value = password;
             submitBtn.click();
@@ -147,29 +186,6 @@ function _unlock_baidu(password, count) {
 }
 
 
-const TAB_ID = "Tab_AutoUnlock";
-
-const PAN_BAIDU_COM = {
-    SubmitBtnID: "submitBtn",
-    InputID: "accessCode"
-};
-
-
-//
-// GM_getTabs(function (db) {
-//     var all_tabs = db;
-//     var tab = null;
-//     // for (var i in all_tabs) {
-//     //     tab = all_tabs[i];
-//     //
-//     //     if (tab[TAB_ID]) {
-//     //         autoUnlock = tab.AutoUnlock;
-//     //         console.info(autoUnlock);
-//     //         console.info(tab);
-//     //         break;
-//     //     }
-//     // }
-// });
 
 function setPref(name, value) { //  cross-browser GM_setValue
     var a = '', b = '';
