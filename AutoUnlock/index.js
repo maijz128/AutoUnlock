@@ -1,10 +1,13 @@
 /**
  * Auther: MaiJZ
- * Date: 2017/7/10
+ * Date: 2017/7/
  * Github: https://github.com/maijz128
  */
 
 /*  pan.baidu.com
+
+ // [2018]新的长链接：https://pan.baidu.com/s/1Hyv_AGjYAxQodHS6yNhHfQ 密码: x6yx
+
  // 链接: https://pan.baidu.com/s/1miHVd8k 密码: hg9j
  // 编码后  >>  %E9%93%BE%E6%8E%A5%3A%20https%3A%2F%2Fpan.baidu.com%2Fs%2F1miHVd8k%20%E5%AF%86%E7%A0%81%3A%20hg9j
 
@@ -76,7 +79,10 @@ function Interpreter(openContent) {
 
     var baidu = new PanBaiduCom();
     var mega = new MegaNZ();
-    if (baidu.matching(openContent)) {
+     if (baidu.matching_LongURL(openContent)) {
+        self._url = baidu.url;
+        self._password = baidu.password;
+     } else if (baidu.matching(openContent)) {
         self._url = baidu.url;
         self._password = baidu.password;
     } else if (mega.matching(openContent)) {
@@ -140,6 +146,36 @@ PanBaiduCom.prototype.matching_SimpleURL = function (openContent) {
                 const url = rURl[0];
                 word = word.replace(url, "");
                 this.url = URL_HEADER + url;
+            }
+        }
+
+        if (this.password === null) {
+            var rPassword = pPassword.exec(word);
+            if (rPassword) {
+                this.password = rPassword[0];
+                word = word.replace(this.password, "");
+            }
+        }
+    }
+    return this.url;
+};
+PanBaiduCom.prototype.matching_LongURL = function (openContent) {
+    const URL_HEADER = "pan.baidu.com/s/";
+    const pUrl = new RegExp("[a-z0-9A-Z]{4}_[a-z0-9A-Z]{15,20}");
+    const pPassword = new RegExp("[a-z0-9A-Z]{4}");
+
+    const content = removeHttpAndHttps(openContent);
+    var wordList = content.split(/\s/g);
+
+    for (var key in wordList) {
+        var word = wordList[key];
+
+        if (this.url === null) {
+            var rURl = pUrl.exec(word);
+            if (rURl) {
+                const url = rURl[0];
+                this.url = URL_HEADER + url;
+                word = word.replace(url, "");
             }
         }
 
