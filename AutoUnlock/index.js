@@ -1,7 +1,12 @@
 /**
  * Auther: MaiJZ
- * Date: 2017/7/
+ * Date: 2018/3/12
  * Github: https://github.com/maijz128
+ * 
+ * 功能：
+ *      处理传递过来的内容（?open=）格式化成链接并打开。
+ *      
+ *     
  */
 
 /*  pan.baidu.com
@@ -25,37 +30,64 @@
 
 const SITE_WAIT_TIME = 500;
 
-const AutoUnlock = {
-    url: null,
-    password: null,
-    done: false
-};
+const g = {};
 
-function main() {
-    AutoUnlock.search = location.search;
-    AutoUnlock.openContent = AutoUnlock.search.replace("?open=", "");
-    AutoUnlock.openContent = decodeURIComponent(AutoUnlock.openContent);
-
-    AutoUnlock.Interpreter = new Interpreter(AutoUnlock.openContent);
-    AutoUnlock.url = AutoUnlock.Interpreter.getURL();
-    AutoUnlock.password = AutoUnlock.Interpreter.getPassword();
-
-    AutoUnlock.done = true;
-
-    refreshUI();
+function LinkData(openContent) {
+    this.openContent = openContent;
+    this.url = null;
+    this.password = null;
+    this.targetLink = null;
 }
 
-function refreshUI() {
+const Util = {
+    hrefContains: function (str) {
+        return location.href.indexOf(str) > 1;
+    },
+    getQueryValue: function (name) {
+        var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+        var r = window.location.search.substr(1).match(reg);
+        if (r !== null)
+            return (r[2]);
+        else
+            return null;
+    },
+    removeHttpAndHttps: function (content) {
+        var result = content;
+        result = result.replace("http://", "");
+        result = result.replace("https://", "");
+        return result;
+    }
+};
+
+
+function main() {
+    // const openContent = location.search.replace("?open=", "");
+    var openContent = Util.getQueryValue("open");
+    openContent = decodeURIComponent(openContent);
+
+    var linkData = BaiduPan(openContent);
+    refreshUI(linkData);
+
+    jumpToLink(linkData);
+
+    g.linkData = linkData;  
+
+    // AutoUnlock.Interpreter = new Interpreter(openContent);
+    // AutoUnlock.url = AutoUnlock.Interpreter.getURL();
+    // AutoUnlock.password = AutoUnlock.Interpreter.getPassword();
+}
+
+function refreshUI(linkData) {
     // const elConsole = document.getElementById("console");
     const elOpenContent = document.querySelector("#console #openContent");
     const elURL = document.querySelector("#console #url");
     const elPassword = document.querySelector("#console #password");
 
-    elOpenContent.innerText = "OpenContent: " + AutoUnlock.openContent;
-    elPassword.innerText = "Password: " + AutoUnlock.password;
+    elOpenContent.innerText = "OpenContent: " + linkData.openContent;
+    elPassword.innerText = "Password: " + linkData.password;
 
     {
-        var url = AutoUnlock.url;
+        var url = linkData.url;
         if (url === null) {
             url = "javascript:void(0);";
         } else if (url.indexOf("http") !== 0) {
@@ -71,6 +103,86 @@ function refreshUI() {
     }
 }
 
+function jumpToLink(linkData) {
+    var isJump = Util.getQueryValue("jump");
+    if (isJump === "false") return;
+
+    console.log(linkData.targetLink);
+    setTimeout(function () {
+        window.location.href = linkData.targetLink;
+    }, SITE_WAIT_TIME);
+
+}
+
+
+function BaiduPan(openContent) {
+
+    function matching(content) {
+        var linkData = new LinkData(content);
+
+        const URL_HEADER = "pan.baidu.com/s/";
+        const pUrl = new RegExp("1[a-z0-9A-Z_]{3,25}");
+        const pPassword = new RegExp("[a-z0-9A-Z]{4}");
+
+
+        var content_format = Util.removeHttpAndHttps(content);
+        content_format = content_format.replace(URL_HEADER, "");
+
+        const wordList = content_format.split(/\s/g);
+
+        for (var key in wordList) {
+            var word = wordList[key];
+
+            if (linkData.url === null) {
+                var rURl = pUrl.exec(word);
+                if (rURl) {
+                    const url = rURl[0];
+                    linkData.url = URL_HEADER + url;
+                    word = word.replace(url, "");
+                }
+            }
+
+            if (linkData.password === null) {
+                var rPassword = pPassword.exec(word);
+                if (rPassword) {
+                    linkData.password = rPassword[0];
+                    word = word.replace(linkData.password, "");
+                }
+            }
+        }
+
+        return linkData;
+    }
+
+    function buildTargetLink(url, password) {
+        const baiduLink_format = formatLinkToInit(url);
+        const targetURL = baiduLink_format + "&password=" + password;
+        return targetURL;
+    }
+
+    // 把链接转换为验证链接
+    function formatLinkToInit(link) {
+        // link : https://pan.baidu.com/s/1kUM8Lt9
+        // return : https://pan.baidu.com/share/init?surl=kUM8Lt9
+        const tokenList = link.split("/");
+        var key = tokenList[tokenList.length - 1];
+        // 去掉前面一位字符, 字符为：1
+        key = key.substring(1);
+        return "https://pan.baidu.com/share/init?surl=" + key;
+    }
+
+    this.linkData = matching(openContent) || new LinkData(openContent);
+    this.linkData.targetLink = buildTargetLink(this.linkData.url, this.linkData.password);
+    return this.linkData;
+}
+
+/*
+const AutoUnlock = {
+    url: null,
+    password: null,
+    done: false
+};
+
 function Interpreter(openContent) {
     const self = this;
     self._openContent = openContent;
@@ -79,10 +191,10 @@ function Interpreter(openContent) {
 
     var baidu = new PanBaiduCom();
     var mega = new MegaNZ();
-     if (baidu.matching_LongURL(openContent)) {
+    if (baidu.matching_LongURL(openContent)) {
         self._url = baidu.url;
         self._password = baidu.password;
-     } else if (baidu.matching(openContent)) {
+    } else if (baidu.matching(openContent)) {
         self._url = baidu.url;
         self._password = baidu.password;
     } else if (mega.matching(openContent)) {
@@ -93,12 +205,6 @@ function Interpreter(openContent) {
         self._password = baidu.password;
     }
 }
-Interpreter.prototype.getURL = function () {
-    return this._url;
-};
-Interpreter.prototype.getPassword = function () {
-    return this._password;
-};
 
 
 function PanBaiduCom() {
@@ -227,7 +333,50 @@ function removeHttpAndHttps(content) {
     return result;
 }
 
+
+function handle(autoUnlock) {
+    const url = autoUnlock.url;
+    const password = autoUnlock.password;
+    const isMega = url.indexOf("mega.nz") > -1;
+    const isBaiduPan = url.indexOf("pan.baidu.com") > -1;
+
+
+    if (isBaiduPan) {
+        handleBaidu(url, password);
+    } else if (isMega) {
+        handleMega(url, password);
+    }
+}
+
+
+
+function MegaPan() {
+
+    function handleMega(url, password) {
+        var targetURL = url + password;
+        jumpSite(targetURL);
+    }
+
+    const SITE_WAIT_TIME = 500;
+    // 更新数据后跳转到网盘
+    function jumpSite(url) {
+        var targetURL = url;
+        if (targetURL.indexOf("http") !== 0) {
+            targetURL = "http://" + targetURL;
+        }
+        setTimeout(function () {
+            if (targetURL) {
+                location.href = targetURL;
+            }
+        }, SITE_WAIT_TIME);
+    }
+
+}
+
+*/
+
 window.onload = function () {
     main();
 };
+
 
